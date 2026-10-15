@@ -1,0 +1,21 @@
+{
+  "name": "HiHSK Local",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "hostRequirements": { "cpus": 2 },
+
+  // Runs once when the codespace is created: install packages, create a private
+  // login secret, build the SQLite database and load the lesson content.
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  // Starts the app every time you open the codespace.
+  "postAttachCommand": { "server": "npm run dev" },
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "HiHSK", "onAutoForward": "openBrowser" }
+  },
+
+  "customizations": {
+    "codespaces": { "openFiles": ["README.md"] }
+  }
+}

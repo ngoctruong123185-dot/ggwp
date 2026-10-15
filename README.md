@@ -84,6 +84,17 @@ Sau lệnh `copy`, mở `.env.local` và thay `JWT_SECRET` bằng một chuỗi 
 
 Hoặc chỉ cần nhấp đúp `start-hihsk.cmd`, file này làm tất cả các bước trên.
 
+### Chạy trên GitHub Codespaces (không cần cài gì)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ngoctruong123185-dot/ggwp)
+
+1. Bấm nút trên (hoặc **Code → Codespaces → Create codespace on main**).
+2. Đợi vài phút lần đầu: Codespaces tự cài gói, tạo khóa bí mật, tạo cơ sở dữ liệu và nạp bài học (`.devcontainer/setup.sh`), rồi chạy `npm run dev`.
+3. Trình duyệt tự mở HiHSK ở cổng 3000. Mặc định chỉ bạn xem được.
+4. Muốn người khác vào: tab **Ports** → chuột phải cổng 3000 → **Port Visibility → Public**, rồi gửi họ đường link. **Trước đó hãy đổi mật khẩu tài khoản `admin`** tại trang Quản trị, vì mật khẩu mặc định có trong README.
+
+Lưu ý: Codespaces tự tắt sau khoảng 30 phút không dùng và tài khoản GitHub Free có hạn mức giờ chạy miễn phí mỗi tháng, nên đây là máy chủ để học và thử, không phải trang web chạy 24/7. Dữ liệu (tài khoản, tiến độ) được giữ lại khi codespace tắt, chỉ mất khi bạn xóa codespace.
+
 Nếu truy cập từ điện thoại hoặc thiết bị khác trong cùng mạng WiFi / LAN:
 - Tìm địa chỉ IPv4 máy tính (chạy lệnh `ipconfig`)
 - Truy cập từ thiết bị khác: `http://<dia-chi-ip>:3000`

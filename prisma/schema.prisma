@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Level {
+  id          String   @id // e.g. "hsk1", "hsk2"
+  name        String   // "HSK 1"
+  order       Int
+  description String?
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String      @id // e.g. "hsk1-lesson-1"
+  levelId     String
+  order       Int
+  title       String      // Chinese title, e.g. "你好"
+  titleVi     String      // Vietnamese title, e.g. "Xin chào"
+  level       Level       @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  vocabItems  VocabItem[]
+  grammars    Grammar[]
+}
+
+model VocabItem {
+  id                String    @id // e.g. "vocab-1"
+  lessonId          String
+  hanzi             String
+  pinyin            String
+  imageUrl          String?
+  order             Int
+  exampleSentence   String?
+  exampleSentenceVi String?
+  lesson            Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  meanings          Meaning[]
+}
+
+model Meaning {
+  id         String    @id // e.g. "meaning-1"
+  vocabId    String
+  wordClass  String    // e.g. "Đại từ", "Động từ", "Danh từ"
+  meaningVi  String    // Vietnamese meaning
+  order      Int       @default(1)
+  vocab      VocabItem @relation(fields: [vocabId], references: [id], onDelete: Cascade)
+}
+
+model RadicalTheme {
+  id          String    @id // e.g. "con-nguoi", "thien-nhien"
+  name        String    // e.g. "Con người", "Thiên nhiên"
+  description String?
+  icon        String?
+  radicals    Radical[]
+}
+
+model Radical {
+  id          String        @id // e.g. "rad-ren"
+  number      Int           @default(0) // Kangxi radical number 1–214
+  hanzi       String        // e.g. "人"
+  variant     String?       // variant / component forms, e.g. "亻"
+  themeId     String
+  meaning     String        // e.g. "Nhân (người)"
+  strokeCount Int
+  pinyin      String?
+  theme       RadicalTheme  @relation(fields: [themeId], references: [id], onDelete: Cascade)
+}
+
+model CharacterDetail {
+  id              String   @id // hanzi itself or id
+  hanzi           String   @unique
+  strokeCount     Int?
+  radicalIds      String?  // JSON string array of radicals
+  compounds       String?  // JSON string array of compound words [{hanzi, pinyin, meaning}]
+  strokeOrderData String?  // cached stroke data or SVG
+}
+
+model Grammar {
+  id          String   @id
+  lessonId    String
+  title       String
+  explanation String
+  examples    String   // JSON string of [{zh, pinyin, vi}]
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model DictationVideo {
+  id          String   @id
+  youtubeId   String
+  title       String
+  level       String   // e.g. "HSK 1", "HSK 2"
+  channelName String
+  publishedAt String?
+  transcript  String   // JSON string array of [{text, startSec, endSec, pinyin, vi}]
+  isFreeTrial Boolean  @default(true)
+}
+
+model User {
+  id           String         @id @default(uuid())
+  username     String         @unique
+  passwordHash String
+  displayName  String
+  role         String         @default("USER") // "USER" | "ADMIN"
+  createdAt    DateTime       @default(now())
+  progress     UserProgress[]
+  streak       UserStreak?
+}
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  String   // "vocab", "lesson", "radical", "dictation"
+  itemId    String   // id of vocab / lesson / radical / dictation
+  status    String   // "not_started", "in_progress", "done"
+  score     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, itemType, itemId])
+}
+
+model UserStreak {
+  userId         String   @id
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStreak  Int      @default(1)
+  lastActiveDate String   // "YYYY-MM-DD"
+}
+
